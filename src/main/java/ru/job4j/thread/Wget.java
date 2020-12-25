@@ -1,9 +1,8 @@
 package ru.job4j.thread;
 
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Geraskin Egor
@@ -14,26 +13,53 @@ public class Wget implements Runnable {
     private final String url;
     private final long speed;
     private static final String OUTPUT_FILE_NAME = "./pom_temp.xml";
-    private BufferedInputStream input;
-    private FileOutputStream output;
-    private byte[] buffer = new byte[1024];
-    private int bytesRead = 0;
-    private int bufferNumber = 0;
+    private final BufferedInputStream input;
+    private final OutputStream output;
+    private final byte[] buffer = new byte[1024];
+    private final AtomicInteger bytesRead = new AtomicInteger();
+    private final AtomicInteger bufferNumber = new AtomicInteger();
 
     public Wget(String url, long speed) {
         this.url = url;
         this.speed = speed;
-        init();
+        BufferedInputStream tempInput = null;
+        input = getStableInput();
+        output = getStableOutput();
+
+    }
+
+    private BufferedInputStream getStableInput() {
+        byte[] bytes = new byte[0];
+        BufferedInputStream input;
+        try {
+            input = new BufferedInputStream(new URL(url).openStream());
+        } catch (Exception ex) {
+            input = new BufferedInputStream(new ByteArrayInputStream(bytes));
+            ex.printStackTrace();
+        }
+        return input;
+    }
+
+    private OutputStream getStableOutput() {
+        int lengthOfBuffer = 10;
+        OutputStream output;
+        try {
+            output = new FileOutputStream(OUTPUT_FILE_NAME);
+        } catch (Exception ex) {
+            output = new ByteArrayOutputStream(lengthOfBuffer);
+            ex.printStackTrace();
+        }
+        return output;
     }
 
     private boolean readBuffer() {
         boolean result = true;
         try {
-            bytesRead = input.read(buffer, 0, buffer.length);
-            if (bytesRead == -1) {
+            bytesRead.set(input.read(buffer, 0, buffer.length));
+            if (bytesRead.get() == -1) {
                 result = false;
             }
-            System.out.printf("Buffer #%d loaded\n", ++bufferNumber);
+            System.out.printf("Buffer #%d loaded\n", bufferNumber.incrementAndGet());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,7 +68,7 @@ public class Wget implements Runnable {
 
     private void writeBuffer() {
         try {
-            output.write(buffer, 0, bytesRead);
+            output.write(buffer, 0, bytesRead.get());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,15 +81,6 @@ public class Wget implements Runnable {
             writeBuffer();
         }
         return result;
-    }
-
-    private void init() {
-        try {
-            input = new BufferedInputStream(new URL(url).openStream());
-            output = new FileOutputStream(OUTPUT_FILE_NAME);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
