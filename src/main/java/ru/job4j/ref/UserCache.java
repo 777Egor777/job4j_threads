@@ -21,13 +21,10 @@ public class UserCache {
     }
 
     public final User findById(int id) {
-        User result;
         if (!users.containsKey(id)) {
             throw new NoSuchElementException("No user with such id");
-        } else {
-            result = User.of(users.get(id));
         }
-        return result;
+        return User.of(users.get(id));
     }
 
     public final List<User> findAll() {
