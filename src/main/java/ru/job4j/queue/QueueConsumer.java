@@ -11,6 +11,7 @@ public final class QueueConsumer<T> extends Thread {
     private final SimpleBlockingQueue<T> queue;
     private boolean isRun = false;
     private T value;
+    private boolean isInterrupted = false;
 
     public QueueConsumer(SimpleBlockingQueue<T> queue) {
         this.queue = queue;
@@ -18,7 +19,11 @@ public final class QueueConsumer<T> extends Thread {
 
     @Override
     public final void run() {
-        value = queue.poll();
+        try {
+            value = queue.poll();
+        } catch (InterruptedException e) {
+            isInterrupted = true;
+        }
     }
 
     @Override
@@ -37,10 +42,15 @@ public final class QueueConsumer<T> extends Thread {
         super.start();
     }
 
-    public T get() throws IllegalAccessException {
+    public T get() throws IllegalAccessException, InterruptedException {
         if (!(this.getState() == State.TERMINATED)) {
             throw new IllegalAccessException(String.format(
                     "Thread %s is running. Value hasn't calculated yet\n",
+                    this.getName()));
+        }
+        if (isInterrupted) {
+            throw new InterruptedException(String.format(
+                    "Thread %s was interrupted due to finish of queue work.\n",
                     this.getName()));
         }
         return value;

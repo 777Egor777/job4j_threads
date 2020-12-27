@@ -9,7 +9,7 @@ public class QueueProducer<T> extends Thread {
     private final SimpleBlockingQueue<T> queue;
     private boolean isRun = false;
     private final T value;
-
+    private InterruptedException ex = null;
     public QueueProducer(SimpleBlockingQueue<T> queue, T value) {
         this.queue = queue;
         this.value = value;
@@ -17,7 +17,11 @@ public class QueueProducer<T> extends Thread {
 
     @Override
     public final void run() {
-        queue.offer(value);
+        try {
+            queue.offer(value);
+        } catch (InterruptedException e) {
+            ex = e;
+        }
     }
 
 
@@ -35,5 +39,13 @@ public class QueueProducer<T> extends Thread {
         }
         isRun = true;
         super.start();
+        try {
+            this.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (ex != null) {
+            ex.printStackTrace();
+        }
     }
 }
