@@ -2,7 +2,6 @@ package ru.job4j.synch;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import ru.job4j.collection.ForwardLinked;
 
 import java.util.Iterator;
@@ -32,7 +31,6 @@ public final class SingleLockList<T> implements Iterable<T> {
     }
 
     @Override
-    @NonNull
     public final synchronized Iterator<T> iterator() {
         return copy(list).iterator();
     }
