@@ -69,7 +69,7 @@ public class UserTest {
         int id = 1;
         int amount = 1000000;
         User user = new User(id, amount);
-        assertThat(user.hashCode(), is(Objects.hash(id, amount)));
+        assertThat(user.hashCode(), is(Objects.hash(id)));
     }
 
     @Test

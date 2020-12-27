@@ -2,6 +2,7 @@ package ru.job4j.storage;
 
 import net.jcip.annotations.Immutable;
 
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -11,6 +12,8 @@ import java.util.Objects;
  */
 @Immutable
 public final class User {
+    public final static Comparator<User> CMP = Comparator.comparingInt(u -> u.id);
+
     private final int id;
     private final int amount;
 
@@ -40,17 +43,17 @@ public final class User {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return String.format("User{id=%d, amount=%d}", id, amount);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, amount);
+    public final int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         if (obj == this) {
             return true;
         }
@@ -58,6 +61,6 @@ public final class User {
             return false;
         }
         User user = (User) obj;
-        return user.id == id && user.amount == amount;
+        return user.id == id;
     }
 }
