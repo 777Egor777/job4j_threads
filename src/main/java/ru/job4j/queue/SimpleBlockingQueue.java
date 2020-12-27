@@ -86,5 +86,6 @@ public final class SimpleBlockingQueue<T> {
 
     public synchronized final void finish() {
         isFinished = true;
+        this.notifyAll();
     }
 }
