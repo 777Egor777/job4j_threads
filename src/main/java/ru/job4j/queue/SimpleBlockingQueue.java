@@ -29,12 +29,14 @@ public final class SimpleBlockingQueue<T> {
 
     public final synchronized void offer(T value) throws InterruptedException {
         checkAdd();
+        if (canAddFlag) {
+            queue.offer(value);
+        } else
         if (Thread.currentThread().isInterrupted()) {
             throw new InterruptedException(String.format(
                     "Thread %s was interrupted\n",
                     Thread.currentThread().getName()));
         }
-        queue.offer(value);
         canDeleteFlag = true;
         if (queue.size() >= size) {
             canAddFlag = false;
@@ -44,12 +46,15 @@ public final class SimpleBlockingQueue<T> {
 
     public final synchronized T poll() throws InterruptedException {
         checkDelete();
+        T value = null;
+        if (canDeleteFlag) {
+            value = queue.poll();
+        } else
         if (Thread.currentThread().isInterrupted()) {
             throw new InterruptedException(String.format(
                     "Thread %s was interrupted\n",
                     Thread.currentThread().getName()));
         }
-        T value = queue.poll();
         canAddFlag = true;
         if (queue.isEmpty()) {
             canDeleteFlag = false;
@@ -87,5 +92,9 @@ public final class SimpleBlockingQueue<T> {
     public synchronized final void finish() {
         isFinished = true;
         this.notifyAll();
+    }
+
+    public final synchronized boolean isEmpty() {
+        return queue.isEmpty();
     }
 }
