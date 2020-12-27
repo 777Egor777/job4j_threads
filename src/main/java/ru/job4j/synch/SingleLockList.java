@@ -27,9 +27,7 @@ public final class SingleLockList<T> implements Iterable<T> {
 
     private synchronized ForwardLinked<T> copy(ForwardLinked<T> list) {
         ForwardLinked<T> result = new ForwardLinked<>();
-        for (int i = 0; i < list.getSize(); ++i) {
-            result.add(list.get(i));
-        }
+        list.getAll().forEach(result::add);
         return result;
     }
 
