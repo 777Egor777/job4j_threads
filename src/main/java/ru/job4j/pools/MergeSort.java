@@ -1,4 +1,4 @@
-package pools;
+package ru.job4j.pools;
 
 /**
  * @author Geraskin Egor
