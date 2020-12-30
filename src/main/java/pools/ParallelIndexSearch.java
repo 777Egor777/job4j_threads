@@ -9,6 +9,7 @@ import java.util.concurrent.RecursiveTask;
  * @since 30.12.2020
  */
 public final class ParallelIndexSearch<T> extends RecursiveTask<Integer> {
+    private final static int THRESHOLD = 10;
     private T[] array;
     private int leftBound;
     private int rightBound;
@@ -35,15 +36,22 @@ public final class ParallelIndexSearch<T> extends RecursiveTask<Integer> {
         return new ForkJoinPool().invoke(new ParallelIndexSearch<>(array, obj));
     }
 
+    private int linearSearch() {
+        int result = -1;
+        for (int index = leftBound; index <= rightBound; ++index) {
+            if (array[index].equals(obj)) {
+                result = index;
+                break;
+            }
+        }
+        return result;
+    }
+
     @Override
     protected Integer compute() {
         final int result;
-        if (leftBound == rightBound) {
-            if (array[leftBound].equals(obj)) {
-                result = leftBound;
-            } else {
-                result = -1;
-            }
+        if (rightBound - leftBound + 1 <= THRESHOLD) {
+            result = linearSearch();
         } else {
             final int mid = (leftBound + rightBound) / 2;
             final ParallelIndexSearch<T> leftPart = new ParallelIndexSearch<>(array, leftBound, mid, obj);
