@@ -19,8 +19,6 @@ public final class SimpleBlockingQueue<T> {
     private boolean canAddFlag = true;
     @GuardedBy("this")
     private boolean canDeleteFlag = false;
-    @GuardedBy("this")
-    private boolean isFinished = false;
     private final int size;
 
     public SimpleBlockingQueue(int size) {
@@ -64,34 +62,23 @@ public final class SimpleBlockingQueue<T> {
     }
 
     private synchronized void checkAdd() {
-        while (!Thread.currentThread().isInterrupted() && !canAddFlag && !isFinished) {
+        while (!Thread.currentThread().isInterrupted() && !canAddFlag) {
             try {
                 this.wait();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-        }
-        if (isFinished) {
-            Thread.currentThread().interrupt();
         }
     }
 
     private synchronized void checkDelete() {
-        while (!Thread.currentThread().isInterrupted() && !canDeleteFlag && !isFinished) {
+        while (!Thread.currentThread().isInterrupted() && !canDeleteFlag) {
             try {
                 this.wait();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
-        if (isFinished) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    public synchronized final void finish() {
-        isFinished = true;
-        this.notifyAll();
     }
 
     public final synchronized boolean isEmpty() {
