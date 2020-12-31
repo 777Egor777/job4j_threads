@@ -22,19 +22,19 @@ public final class User {
         this.amount = amount;
     }
 
-    public final int getId() {
+    public int getId() {
         return id;
     }
 
-    public final int getAmount() {
+    public int getAmount() {
         return amount;
     }
 
-    public final User setId(int id) {
+    public User setId(int id) {
         return new User(id, amount);
     }
 
-    public final User setAmount(int amount) {
+    public User setAmount(int amount) {
         return new User(id, amount);
     }
 
@@ -43,17 +43,17 @@ public final class User {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return String.format("User{id=%d, amount=%d}", id, amount);
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return Objects.hash(id);
     }
 
     @Override
-    public final boolean equals(Object obj) {
+    public boolean equals(Object obj) {
         if (obj == this) {
             return true;
         }

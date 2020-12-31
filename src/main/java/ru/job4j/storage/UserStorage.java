@@ -30,7 +30,6 @@ public final class UserStorage implements Storage<User> {
         boolean result = false;
         if (users.containsKey(user1.getId())) {
             result = true;
-            users.remove(user1.getId());
             users.put(user2.getId(), User.of(user2));
         }
         return result;
@@ -46,24 +45,14 @@ public final class UserStorage implements Storage<User> {
         return result;
     }
 
-    private synchronized User findUserById(int id) {
-        User result = new User(-1, 0);
-        if (users.containsKey(id)) {
-            result = User.of(users.get(id));
-        }
-        return result;
-    }
-
     public synchronized final boolean transfer(int fromId, int toId, int amount) {
         boolean result = false;
-        User fromUser = findUserById(fromId);
-        User toUser = findUserById(toId);
-        if (fromUser.getId() != -1 && toUser.getId() != -1 && fromUser.getAmount() >= amount) {
+        User fromUser = users.get(fromId);
+        User toUser = users.get(toId);
+        if (fromUser != null && toUser != null && fromUser.getAmount() >= amount) {
             result = true;
-            delete(fromUser);
-            delete(toUser);
-            add(new User(fromUser.getId(), fromUser.getAmount() - amount));
-            add(new User(toUser.getId(), toUser.getAmount() + amount));
+            update(fromUser, fromUser.setAmount(fromUser.getAmount() - amount));
+            update(toUser, toUser.setAmount(toUser.getAmount() + amount));
         }
         return result;
     }
