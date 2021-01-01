@@ -26,11 +26,11 @@ public final class UserStorage implements Storage<User> {
     }
 
     @Override
-    public final synchronized boolean update(User user1, User user2) {
+    public final synchronized boolean update(User user) {
         boolean result = false;
-        if (users.containsKey(user1.getId())) {
+        if (users.containsKey(user.getId())) {
             result = true;
-            users.put(user2.getId(), User.of(user2));
+            users.put(user.getId(), User.of(user));
         }
         return result;
     }
@@ -51,8 +51,8 @@ public final class UserStorage implements Storage<User> {
         User toUser = users.get(toId);
         if (fromUser != null && toUser != null && fromUser.getAmount() >= amount) {
             result = true;
-            update(fromUser, fromUser.setAmount(fromUser.getAmount() - amount));
-            update(toUser, toUser.setAmount(toUser.getAmount() + amount));
+            update(fromUser.setAmount(fromUser.getAmount() - amount));
+            update(toUser.setAmount(toUser.getAmount() + amount));
         }
         return result;
     }

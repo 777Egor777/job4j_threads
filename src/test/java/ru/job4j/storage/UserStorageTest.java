@@ -27,7 +27,7 @@ public class UserStorageTest {
         User user = new User(10, 7000);
         storage.add(user);
         User newUser = user.setAmount(700);
-        storage.update(user, newUser);
+        storage.update(newUser);
         assertThat(storage.getAllUsers().get(0), is(newUser));
     }
 

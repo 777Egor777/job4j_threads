@@ -7,6 +7,6 @@ package ru.job4j.storage;
  */
 public interface Storage<T> {
     boolean add(T t);
-    boolean update(T t1, T t2);
+    boolean update(T t);
     boolean delete(T t);
 }
