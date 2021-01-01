@@ -7,7 +7,6 @@ package ru.job4j.multithreads;
  */
 public final class MasterSlaveBarrier {
     private boolean canMaster = true;
-    private boolean canSlave = false;
 
     public synchronized void tryMaster() {
         while (!canMaster) {
@@ -20,7 +19,7 @@ public final class MasterSlaveBarrier {
     }
 
     public synchronized void trySlave() {
-        while (!canSlave) {
+        while (canMaster) {
             try {
                 this.wait();
             } catch (InterruptedException e) {
@@ -31,12 +30,10 @@ public final class MasterSlaveBarrier {
 
     public synchronized void doneMaster() {
         canMaster = false;
-        canSlave = true;
         this.notifyAll();
     }
 
     public synchronized void doneSlave() {
-        canSlave = false;
         canMaster = true;
         this.notifyAll();
     }
