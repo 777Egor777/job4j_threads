@@ -10,13 +10,9 @@ import java.util.function.Consumer;
  * @version 1.0
  * @since 27.12.2020
  */
-@ThreadSafe
 public final class QueueConsumer<T> extends Thread {
-    @GuardedBy("this")
     private final SimpleBlockingQueue<T> queue;
-    @GuardedBy("this")
     private boolean isRun = false;
-    @GuardedBy("this")
     private T value;
 
     public QueueConsumer(SimpleBlockingQueue<T> queue) {
@@ -24,7 +20,7 @@ public final class QueueConsumer<T> extends Thread {
     }
 
     @Override
-    public synchronized final void run() {
+    public void run() {
         try {
             value = queue.poll();
         } catch (InterruptedException e) {
@@ -33,7 +29,7 @@ public final class QueueConsumer<T> extends Thread {
     }
 
     @Override
-    public synchronized void start() {
+    public void start() {
         if (!isRun) {
             isRun = true;
             super.start();
@@ -44,7 +40,7 @@ public final class QueueConsumer<T> extends Thread {
         return this.getState() == State.TERMINATED;
     }
 
-    public synchronized T get() throws IllegalAccessException, InterruptedException {
+    public T get() throws IllegalAccessException, InterruptedException {
         if (!isTerminated()) {
             throw new IllegalAccessException(String.format(
                     "Thread %s is running. Value hasn't calculated yet\n",

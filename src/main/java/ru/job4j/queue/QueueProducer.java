@@ -8,11 +8,8 @@ import net.jcip.annotations.ThreadSafe;
  * @version 1.0
  * @since 27.12.2020
  */
-@ThreadSafe
 public final class QueueProducer<T> extends Thread {
-    @GuardedBy("this")
     private final SimpleBlockingQueue<T> queue;
-    @GuardedBy("this")
     private boolean isRun = false;
     private final T value;
 
@@ -22,7 +19,7 @@ public final class QueueProducer<T> extends Thread {
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
         try {
             queue.offer(value);
         } catch (InterruptedException e) {
@@ -32,7 +29,7 @@ public final class QueueProducer<T> extends Thread {
 
 
     @Override
-    public synchronized void start() {
+    public void start() {
         if (!isRun) {
             isRun = true;
             super.start();
