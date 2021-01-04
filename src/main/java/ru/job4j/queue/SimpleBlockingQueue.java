@@ -15,10 +15,6 @@ import java.util.Queue;
 public final class SimpleBlockingQueue<T> {
     @GuardedBy("this")
     private final Queue<T> queue = new LinkedList<>();
-    @GuardedBy("this")
-    private boolean canAddFlag = true;
-    @GuardedBy("this")
-    private boolean canDeleteFlag = false;
     private final int size;
 
     public SimpleBlockingQueue(int size) {
@@ -26,59 +22,21 @@ public final class SimpleBlockingQueue<T> {
     }
 
     public final synchronized void offer(T value) throws InterruptedException {
-        checkAdd();
-        if (canAddFlag) {
-            queue.offer(value);
-        } else
-        if (Thread.currentThread().isInterrupted()) {
-            throw new InterruptedException(String.format(
-                    "Thread %s was interrupted\n",
-                    Thread.currentThread().getName()));
+        while (queue.size() >= size) {
+            this.wait();
         }
-        canDeleteFlag = true;
-        if (queue.size() >= size) {
-            canAddFlag = false;
-        }
+        queue.offer(value);
         this.notifyAll();
     }
 
     public final synchronized T poll() throws InterruptedException {
-        checkDelete();
-        T value = null;
-        if (canDeleteFlag) {
-            value = queue.poll();
-        } else
-        if (Thread.currentThread().isInterrupted()) {
-            throw new InterruptedException(String.format(
-                    "Thread %s was interrupted\n",
-                    Thread.currentThread().getName()));
+        T value;
+        while (queue.isEmpty()) {
+            this.wait();
         }
-        canAddFlag = true;
-        if (queue.isEmpty()) {
-            canDeleteFlag = false;
-        }
+        value = queue.poll();
         this.notifyAll();
         return value;
-    }
-
-    private synchronized void checkAdd() {
-        while (!Thread.currentThread().isInterrupted() && !canAddFlag) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
-    }
-
-    private synchronized void checkDelete() {
-        while (!Thread.currentThread().isInterrupted() && !canDeleteFlag) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
     }
 
     public final synchronized boolean isEmpty() {
