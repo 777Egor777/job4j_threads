@@ -2,9 +2,10 @@ package ru.job4j.synch;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
-import ru.job4j.collection.ForwardLinked;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Geraskin Egor
@@ -14,20 +15,18 @@ import java.util.Iterator;
 @ThreadSafe
 public final class SingleLockList<T> implements Iterable<T> {
     @GuardedBy("this")
-    private final ForwardLinked<T> list = new ForwardLinked<>();
+    private final List<T> list = new LinkedList<>();
 
     public final synchronized void add(T value) {
-        list.add(value);
+        list.add(0, value);
     }
 
     public final synchronized T get(int index) {
         return list.get(index);
     }
 
-    private synchronized ForwardLinked<T> copy(ForwardLinked<T> list) {
-        ForwardLinked<T> result = new ForwardLinked<>();
-        list.getAll().forEach(result::add);
-        return result;
+    private synchronized List<T> copy(List<T> list) {
+        return new LinkedList<>(list);
     }
 
     @Override

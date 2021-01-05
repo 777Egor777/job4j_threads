@@ -42,9 +42,9 @@
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>ru.job4j</groupId>
-            <artifactId>chapter_001</artifactId>
-            <version>1.0</version>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>2.3.2</version>
         </dependency>
     </dependencies>
 

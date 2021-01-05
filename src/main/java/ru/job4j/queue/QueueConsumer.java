@@ -41,14 +41,14 @@ public final class QueueConsumer<T> extends Thread {
     }
 
     public T get() throws IllegalAccessException, InterruptedException {
-        if (!isTerminated()) {
-            throw new IllegalAccessException(String.format(
-                    "Thread %s is running. Value hasn't calculated yet\n",
-                    this.getName()));
-        }
         if (this.isInterrupted()) {
             throw new InterruptedException(String.format(
                     "Thread %s was interrupted due to finish of queue work.\n",
+                    this.getName()));
+        }
+        if (!isTerminated()) {
+            throw new IllegalAccessException(String.format(
+                    "Thread %s is running. Value hasn't calculated yet\n",
                     this.getName()));
         }
         return value;
