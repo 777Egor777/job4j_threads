@@ -25,7 +25,7 @@ public final class AutoRefresh {
             scheduler.start();
             JobDataMap jdm = new JobDataMap();
             jdm.put("refresh", refresh);
-            JobDetail job =JobBuilder.newJob(RefreshJob.class).setJobData(jdm).build();
+            JobDetail job = JobBuilder.newJob(RefreshJob.class).setJobData(jdm).build();
             SimpleScheduleBuilder times = SimpleScheduleBuilder.simpleSchedule()
                 .withIntervalInSeconds(period)
                     .repeatForever();
