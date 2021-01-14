@@ -12,17 +12,10 @@ import java.util.Queue;
  * @since 27.12.2020
  */
 @ThreadSafe
-public final class SimpleBlockingQueue<T> implements Refresh {
+public final class SimpleBlockingQueue<T> {
     @GuardedBy("this")
     private final Queue<T> queue = new LinkedList<>();
     private final int size;
-    @GuardedBy("this")
-    private boolean isFinished = false;
-    private final static int REFRESH_PERIOD_SEC = 5;
-    private final AutoRefresh auto = new AutoRefresh(REFRESH_PERIOD_SEC, this);
-    @GuardedBy("this")
-    private long lastUpdateMoment = System.currentTimeMillis();
-    private final static long MAX_ALL_WAIT_PERIOD_MS = 10L * 1000L;
 
     public SimpleBlockingQueue(int size) {
         this.size = size;
@@ -31,12 +24,8 @@ public final class SimpleBlockingQueue<T> implements Refresh {
     public synchronized void offer(T value) throws InterruptedException {
         while (queue.size() >= size) {
             wait();
-            if (isFinished) {
-                throw new InterruptedException();
-            }
         }
         queue.offer(value);
-        lastUpdateMoment = System.currentTimeMillis();
         notifyAll();
     }
 
@@ -44,12 +33,8 @@ public final class SimpleBlockingQueue<T> implements Refresh {
         T value;
         while (queue.isEmpty()) {
             wait();
-            if (isFinished) {
-                throw new InterruptedException();
-            }
         }
         value = queue.poll();
-        lastUpdateMoment = System.currentTimeMillis();
         notifyAll();
         return value;
     }
@@ -58,14 +43,5 @@ public final class SimpleBlockingQueue<T> implements Refresh {
         return queue.isEmpty();
     }
 
-    @Override
-    public synchronized void refresh() {
-        long cur = System.currentTimeMillis();
-        long diff = cur - lastUpdateMoment;
-        if (diff > MAX_ALL_WAIT_PERIOD_MS) {
-            auto.shutDown();
-            isFinished = true;
-            notifyAll();
-        }
-    }
+
 }

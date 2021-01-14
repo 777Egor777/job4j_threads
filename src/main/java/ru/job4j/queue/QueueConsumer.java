@@ -1,9 +1,6 @@
 package ru.job4j.queue;
 
-import net.jcip.annotations.GuardedBy;
-import net.jcip.annotations.ThreadSafe;
-
-import java.util.function.Consumer;
+import java.util.Objects;
 
 /**
  * @author Geraskin Egor
@@ -14,15 +11,20 @@ public final class QueueConsumer<T> extends Thread {
     private final SimpleBlockingQueue<T> queue;
     private boolean isRun = false;
     private T value;
+    private final T poisonPill;
 
-    public QueueConsumer(SimpleBlockingQueue<T> queue) {
+    public QueueConsumer(SimpleBlockingQueue<T> queue, T poisonPill) {
         this.queue = queue;
+        this.poisonPill = poisonPill;
     }
 
     @Override
     public void run() {
         try {
             value = queue.poll();
+            if (Objects.equals(value, poisonPill)) {
+                queue.offer(poisonPill);
+            }
         } catch (InterruptedException e) {
             this.interrupt();
         }
