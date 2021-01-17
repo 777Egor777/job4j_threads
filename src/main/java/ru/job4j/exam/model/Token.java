@@ -29,11 +29,15 @@ public final class Token {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Token token = (Token) o;
-        return ttl == token.ttl &&
-                Objects.equals(value, token.value);
+        return ttl == token.ttl
+                && Objects.equals(value, token.value);
     }
 
     @Override
@@ -43,9 +47,9 @@ public final class Token {
 
     @Override
     public String toString() {
-        return "Token{" +
-                "value='" + value + '\'' +
-                ", ttl=" + ttl +
-                '}';
+        return "Token{"
+                + "value='" + value + '\''
+                + ", ttl=" + ttl
+                + '}';
     }
 }

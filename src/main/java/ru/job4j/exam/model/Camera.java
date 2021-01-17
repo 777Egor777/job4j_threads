@@ -47,14 +47,18 @@ public final class Camera {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Camera camera = (Camera) o;
-        return id == camera.id &&
-                ttl == camera.ttl &&
-                Objects.equals(urlType, camera.urlType) &&
-                Objects.equals(videoUrl, camera.videoUrl) &&
-                Objects.equals(value, camera.value);
+        return id == camera.id
+                && ttl == camera.ttl
+                && Objects.equals(urlType, camera.urlType)
+                && Objects.equals(videoUrl, camera.videoUrl)
+                && Objects.equals(value, camera.value);
     }
 
     @Override

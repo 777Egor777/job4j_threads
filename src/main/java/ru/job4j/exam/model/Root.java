@@ -35,12 +35,16 @@ public final class Root {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Root root = (Root) o;
-        return id == root.id &&
-                Objects.equals(sourceDataUrl, root.sourceDataUrl) &&
-                Objects.equals(tokenDataUrl, root.tokenDataUrl);
+        return id == root.id
+                && Objects.equals(sourceDataUrl, root.sourceDataUrl)
+                && Objects.equals(tokenDataUrl, root.tokenDataUrl);
     }
 
     @Override
@@ -50,10 +54,10 @@ public final class Root {
 
     @Override
     public String toString() {
-        return "Root{" +
-                "id=" + id +
-                ", sourceDataUrl='" + sourceDataUrl + '\'' +
-                ", tokenDataUrl='" + tokenDataUrl + '\'' +
-                '}';
+        return "Root{"
+                + "id=" + id
+                + ", sourceDataUrl='" + sourceDataUrl + '\''
+                + ", tokenDataUrl='" + tokenDataUrl + '\''
+                + '}';
     }
 }

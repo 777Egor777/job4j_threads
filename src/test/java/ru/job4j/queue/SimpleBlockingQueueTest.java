@@ -17,7 +17,7 @@ public class SimpleBlockingQueueTest {
     public QueueProducer<Integer> producer;
     public int value = 777;
     public int size = 10;
-    Integer poisonPill = (int)1e9 + 7;
+    Integer poisonPill = (int) 1e9 + 7;
     @Before
     public void doBeforeEachTest() {
         queue = new SimpleBlockingQueue<>(size);

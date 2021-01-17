@@ -29,11 +29,15 @@ public final class Source {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Source source = (Source) o;
-        return Objects.equals(urlType, source.urlType) &&
-                Objects.equals(videoUrl, source.videoUrl);
+        return Objects.equals(urlType, source.urlType)
+                && Objects.equals(videoUrl, source.videoUrl);
     }
 
     @Override
@@ -43,9 +47,9 @@ public final class Source {
 
     @Override
     public String toString() {
-        return "Source{" +
-                "urlType='" + urlType + '\'' +
-                ", videoUrl='" + videoUrl + '\'' +
-                '}';
+        return "Source{"
+                + "urlType='" + urlType + '\''
+                + ", videoUrl='" + videoUrl + '\''
+                + '}';
     }
 }
