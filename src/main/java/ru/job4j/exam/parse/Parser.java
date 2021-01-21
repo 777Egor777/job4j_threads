@@ -37,23 +37,13 @@ public final class Parser {
     }
 
     public Token parseToken(String link) {
-        String content = "";
-        try {
-            content = getContent(link);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String content = getContent(link);
         JSONObject obj = (JSONObject) JSONValue.parse(content);
         return new Token(obj.get("value").toString(), Integer.parseInt(obj.get("ttl").toString()));
     }
 
     public Source parseSource(String link) {
-        String content = "";
-        try {
-            content = getContent(link);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String content = getContent(link);
         JSONObject obj = (JSONObject) JSONValue.parse(content);
         return new Source(obj.get("urlType").toString(), obj.get("videoUrl").toString());
     }
@@ -69,12 +59,7 @@ public final class Parser {
 
     public List<Root> parseRoots(String link) {
         List<Root> result = new ArrayList<>();
-        String content = "";
-        try {
-            content = getContent(link);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String content = getContent(link);
         content = "{\"arr\":" + content + "}";
         JSONObject obj = (JSONObject) JSONValue.parse(content);
         JSONArray arr =  (JSONArray) obj.get("arr");
@@ -82,12 +67,14 @@ public final class Parser {
         return result;
     }
 
-    private String getContent(String link) throws IOException {
-        String content;
+    private String getContent(String link) {
+        String content = "";
         try (BufferedReader input = new BufferedReader(new InputStreamReader(
                 new URL(link).openStream()
         ))) {
             content = input.lines().collect(Collectors.joining(System.lineSeparator()));
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return content;
     }
